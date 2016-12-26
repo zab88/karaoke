@@ -19,7 +19,8 @@ if len(numbers6) == 6:
 else:
     lower = np.array([130, 100, 160])
     upper = np.array([210, 255, 255])
-
+    # cut_images 130,100,160,210,255,255
+    # cut_images2 30,115,115,65,255,255
 
 if len(glob.glob(path_to_images)) == 0:
     print('not found <path_to_folders>')
@@ -27,6 +28,7 @@ if len(glob.glob(path_to_images)) == 0:
 path_to_images = os.path.abspath(path_to_images)
 
 debug = False
+# debug = True
 
 # if directories does not exist, let's create them
 dirs_mast = ['out', 'xlsx']
@@ -46,6 +48,7 @@ for sub_dir in glob.glob(path_to_images+os.sep+'*'+os.sep):
 
     for ii in range(0, 2, 1):
         frame_now = 0
+        start_frame = 0
         frame_names = []
         for img_path in glob.glob(sub_dir+os.sep+'*.jpg'):
             # just to add 0.2
@@ -70,6 +73,7 @@ for sub_dir in glob.glob(path_to_images+os.sep+'*'+os.sep):
                 prev_area = current_area
                 prev_img = img_origin.copy()
                 start_time = os.path.basename(img_path)[:-4]
+                start_frame = frame_now
                 if frame_now>2:
                     start_time = frame_names[-2]
                 continue
@@ -86,7 +90,9 @@ for sub_dir in glob.glob(path_to_images+os.sep+'*'+os.sep):
                     print 'stop ' + img_path
                 end_time = os.path.basename(img_path)[:-4]
 
-                cv2.imwrite('out'+os.sep+start_time+'_'+end_time+'.jpg', prev_img)
+                # check length of sequence
+                if frame_now - start_frame > 10:
+                    cv2.imwrite('out'+os.sep+start_time+'_'+end_time+'.jpg', prev_img)
                 prev_area = None
                 prev_img = None
                 continue
