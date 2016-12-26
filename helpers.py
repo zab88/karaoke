@@ -12,6 +12,8 @@ def make_xlsx(movieName):
     worksheet.set_column(2, 2, 80)
 
     j = 0
+    time_start_prev = None
+    time_end_prev = None
     for f_test in glob.glob("out/*.jpg"):
         # time format
         time_start = os.path.basename(f_test).replace('.jpg', '').split('_')[0].replace('-', ':')
@@ -24,6 +26,17 @@ def make_xlsx(movieName):
         worksheet.insert_image('C'+str(j+1), f_test)
 
         worksheet.set_row(j, 32)
+
+        # quick fix time
+        if time_end_prev is None:
+            time_start_prev = time_start
+            time_end_prev = time_end
+            j += 1
+            continue
+        if time_end_prev > time_start:
+            worksheet.write('B' + str(j), time_start)
+        time_start_prev = time_start
+        time_end_prev = time_end
 
         j += 1
     workbook.close()
