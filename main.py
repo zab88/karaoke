@@ -1,6 +1,7 @@
 '''
 <path_to_images>
 <6 numbers, separated by comma>
+<number of lines>
 '''
 import cv2
 import numpy as np
@@ -22,6 +23,12 @@ else:
     upper = np.array([210, 255, 255])
     # cut_images 130,100,160,210,255,255
     # cut_images2 30,115,115,65,255,255
+
+# number of lines can be 1 or 2
+karaoke_lines = 2
+if len(sys.argv)==4:
+    if str(sys.argv[3]) in ['1', '2']:
+        karaoke_lines = int(sys.argv[3])
 
 if len(glob.glob(path_to_images)) == 0:
     print('not found <path_to_images>')
@@ -48,7 +55,7 @@ start_time = '00-00-00-00'
 end_time = '00-00-00-00'
 prev_img = None
 
-for ii in range(0, 2, 1):
+for ii in range(0, karaoke_lines, 1):
     frame_now = 0
     start_frame = 0
     frame_names = []
@@ -61,10 +68,12 @@ for ii in range(0, 2, 1):
         frame_now += 1
         img_origin = cv2.imread(img_path)
         h, w = img_origin.shape[:2]
-        if ii==0:
-            img_origin = img_origin[:h/2, :, :]
-        else:
-            img_origin = img_origin[h/2:, :, :]
+        # splitting if two lines
+        if karaoke_lines == 2:
+            if ii==0:
+                img_origin = img_origin[:h/2, :, :]
+            else:
+                img_origin = img_origin[h/2:, :, :]
 
         hsv = cv2.cvtColor(img_origin, cv2.COLOR_BGR2HSV)
         text_mask = cv2.inRange(hsv, lower, upper)
