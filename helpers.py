@@ -40,3 +40,24 @@ def make_xlsx(movieName):
 
         j += 1
     workbook.close()
+
+def symmetry_clean(img_bin):
+    h, w = img_bin.shape[:2]
+    cols_sum = img_bin.sum(axis=0)
+    cols_sum = [1 if s > 1 else 0 for s in cols_sum]
+    mid = len(cols_sum)/2
+    m_w = 25
+    min_clean = None
+    for i in xrange(0, len(cols_sum)/2, 1):
+        if sum(cols_sum[mid-i-m_w:mid-i]) < 1:
+            min_clean = i
+            break
+        if sum(cols_sum[mid+i:mid+i+m_w]) < 1:
+            min_clean = i
+            break
+    if min_clean is not None:
+        # clean
+        res = img_bin.copy()
+        cv2.rectangle(res, (0, 0), (mid-min_clean, h), color=(0), thickness=-1)
+        cv2.rectangle(res, (mid+min_clean, 0), (w, h), color=(0), thickness=-1)
+    return res

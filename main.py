@@ -9,6 +9,8 @@ import glob, os, sys
 import helpers as hh
 
 # cut_images2 30,115,115,65,255,255
+# cut_images2\movie_02\\*.jpg 30,115,115,65,255,255
+# K:\MyPrograms\python2\recipe\simon-crop\out_2017\0U0QnC5Zw-w/*.jpg 0,0,210,200,200,255
 if len(sys.argv)<3:
     print(__doc__)
     sys.exit()
@@ -77,6 +79,9 @@ for ii in range(0, karaoke_lines, 1):
 
         hsv = cv2.cvtColor(img_origin, cv2.COLOR_BGR2HSV)
         text_mask = cv2.inRange(hsv, lower, upper)
+
+        # let's apply symmetry
+        text_mask = hh.symmetry_clean(text_mask)
 
         current_area = cv2.countNonZero(text_mask)
 
